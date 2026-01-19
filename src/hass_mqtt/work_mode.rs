@@ -45,7 +45,7 @@ impl ParsedWorkMode {
             match &mv.field_type {
                 DeviceParameters::Enum { options } => {
                     for opt in options {
-                        let mode_name = &opt.name;
+                        let mode_name = opt.name.as_str();
                         if let Some(work_mode) = work_modes.get_mut(mode_name) {
                             work_mode.add_values(opt);
                         }

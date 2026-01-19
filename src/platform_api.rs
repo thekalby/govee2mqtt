@@ -353,7 +353,7 @@ impl GoveeApiClient {
             match &cap.parameters {
                 Some(DeviceParameters::Enum { options }) => {
                     for opt in options {
-                        if scene.eq_ignore_ascii_case(&opt.name) {
+                        if scene.eq_ignore_ascii_case(opt.name.as_str()) {
                             return self.control_device(&device, &cap, opt.value.clone()).await;
                         }
                     }

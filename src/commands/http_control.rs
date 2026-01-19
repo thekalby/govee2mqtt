@@ -164,7 +164,7 @@ impl HttpControlCommand {
                     let mut music_mode = None;
                     for_each_music_mode(
                         |opt| {
-                            if opt.name.eq_ignore_ascii_case(mode) {
+                            if opt.name.as_str().eq_ignore_ascii_case(mode) {
                                 music_mode.replace(opt.value.clone());
                                 // Halt iteration
                                 Ok(false)
