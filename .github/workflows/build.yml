@@ -165,7 +165,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Apply tag to version
-        run: ./scripts/apply-tag.sh
+        run: TAG_NAME="${{ github.ref_name }}" ./scripts/apply-tag.sh
       - name: Build and Publish Home Assistant Add On
         uses: home-assistant/builder@2025.11.0
         with:
