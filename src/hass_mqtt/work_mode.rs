@@ -298,7 +298,7 @@ mod test {
                         field_name: "workMode".to_string(),
                         field_type: DeviceParameters::Enum {
                             options: vec![EnumOption {
-                                name: "Normal".to_string(),
+                                name: "Normal".into(),
                                 value: 1.into(),
                                 extras: HashMap::new(),
                             }],
@@ -310,7 +310,7 @@ mod test {
                         field_name: "modeValue".to_string(),
                         field_type: DeviceParameters::Enum {
                             options: vec![EnumOption {
-                                name: "Normal".to_string(),
+                                name: "Normal".into(),
                                 value: JsonValue::Null,
                                 extras: [(
                                     "options".to_string(),
@@ -433,7 +433,7 @@ ParsedWorkMode {
                         field_name: "workMode".to_string(),
                         field_type: DeviceParameters::Enum {
                             options: vec![EnumOption {
-                                name: "Normal".to_string(),
+                                name: "Normal".into(),
                                 value: 1.into(),
                                 extras: HashMap::new(),
                             }],
@@ -445,7 +445,7 @@ ParsedWorkMode {
                         field_name: "modeValue".to_string(),
                         field_type: DeviceParameters::Enum {
                             options: vec![EnumOption {
-                                name: "Normal".to_string(),
+                                name: "Normal".into(),
                                 value: JsonValue::Null,
                                 extras: [(
                                     "options".to_string(),
