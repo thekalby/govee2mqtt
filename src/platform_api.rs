@@ -956,9 +956,111 @@ pub struct IntegerRange {
     pub precision: u32,
 }
 
+/// Represents a name that can be either a simple string or a localized object
+/// with language keys like {"en": "Game", "de": "Spiel", ...}
+#[derive(Clone)]
+pub struct LocalizedName(pub String);
+
+// Custom Debug implementation to maintain compatibility with existing snapshot tests.
+// Outputs just the string value with quotes instead of LocalizedName("value").
+impl std::fmt::Debug for LocalizedName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self.0)
+    }
+}
+
+impl LocalizedName {
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+impl From<String> for LocalizedName {
+    fn from(s: String) -> Self {
+        LocalizedName(s)
+    }
+}
+
+impl From<&str> for LocalizedName {
+    fn from(s: &str) -> Self {
+        LocalizedName(s.to_string())
+    }
+}
+
+impl std::fmt::Display for LocalizedName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl PartialEq<str> for LocalizedName {
+    fn eq(&self, other: &str) -> bool {
+        self.0 == other
+    }
+}
+
+impl PartialEq<&str> for LocalizedName {
+    fn eq(&self, other: &&str) -> bool {
+        self.0 == *other
+    }
+}
+
+impl PartialEq<String> for LocalizedName {
+    fn eq(&self, other: &String) -> bool {
+        self.0 == *other
+    }
+}
+
+impl PartialEq<LocalizedName> for LocalizedName {
+    fn eq(&self, other: &LocalizedName) -> bool {
+        self.0 == other.0
+    }
+}
+
+impl Eq for LocalizedName {}
+
+impl<'de> Deserialize<'de> for LocalizedName {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let value = JsonValue::deserialize(deserializer)?;
+        match value {
+            JsonValue::String(s) => Ok(LocalizedName(s)),
+            JsonValue::Object(map) => {
+                // Try to get English name first, then "key", then any value
+                if let Some(JsonValue::String(en)) = map.get("en") {
+                    Ok(LocalizedName(en.clone()))
+                } else if let Some(JsonValue::String(key)) = map.get("key") {
+                    Ok(LocalizedName(key.clone()))
+                } else {
+                    // Fall back to first string value found
+                    for (_k, v) in map.iter() {
+                        if let JsonValue::String(s) = v {
+                            return Ok(LocalizedName(s.clone()));
+                        }
+                    }
+                    // If no string found, serialize the whole thing
+                    Ok(LocalizedName(format!("{:?}", map)))
+                }
+            }
+            _ => Ok(LocalizedName(value.to_string())),
+        }
+    }
+}
+
+impl Serialize for LocalizedName {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        self.0.serialize(serializer)
+    }
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct EnumOption {
-    pub name: String,
+    pub name: LocalizedName,
     #[serde(default)]
     pub value: JsonValue,
     #[serde(flatten)]

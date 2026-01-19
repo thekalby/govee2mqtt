@@ -386,7 +386,7 @@ impl GoveeUndocumentedApi {
             for s in c.scenes {
                 if let Some(param_id) = s.light_effects.get(0).map(|e| e.scence_param_id) {
                     options.push(EnumOption {
-                        name: s.scene_name,
+                        name: s.scene_name.into(),
                         value: json!({
                             "paramId": param_id,
                             "id": s.scene_id,
